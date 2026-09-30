@@ -63,6 +63,25 @@ def page(path, title, body, depth):
 
 open("style.css","w").write(CSS)
 
+
+def write_privacy(a, path, depth):
+    items = "".join(f"<li>{p}</li>" for p in a["privacy"])
+    ads = ""
+    if a["slug"] == "luck-enchant":
+        ads = '<p>맞춤 광고는 기기의 <b>설정 &gt; Google &gt; 광고</b>에서 광고 ID를 삭제하거나 맞춤 광고를 끌 수 있습니다.</p>'
+    page(path, f'{a["name"]} 개인정보처리방침 - {BIZ}', f"""<h1>{a["name"]} 개인정보처리방침</h1>
+<p class="lead">시행일 {UPDATED}</p>
+<p>{BIZ}(대표 {REP}, 이하 "개발자")는 {a["name"]} 앱(이하 "앱") 이용자의 개인정보를 소중히 다루며, 관련 법령에 따라 아래와 같이 처리합니다.</p>
+<h2>1. 수집·이용하는 정보</h2><ul>{items}</ul><p>{a["extra"]}</p>{ads}
+<h2>2. 회원가입 및 계정</h2><p>앱은 회원가입이나 로그인을 요구하지 않으며, 개발자는 이용자를 식별할 수 있는 정보를 서버에 보관하지 않습니다.</p>
+<h2>3. 보관 및 이용 기간</h2><p>앱 데이터는 이용자의 기기에만 저장되며, 앱을 삭제하면 함께 삭제됩니다. 외부 서비스(광고, 지도, 공공데이터 등)가 처리하는 정보는 각 서비스의 정책에 따른 기간 동안 보관됩니다.</p>
+<h2>4. 제3자 제공 및 국외 이전</h2><p>개발자는 이용자의 개인정보를 별도로 수집하거나 제3자에게 제공·판매하지 않습니다. 위에 적은 외부 서비스 사업자(Google, 카카오 등)는 자체 정책에 따라 정보를 국외 서버를 포함한 곳에서 처리할 수 있습니다.</p>
+<h2>5. 이용자의 권리</h2><p>이용자는 기기 설정에서 권한(알림, 위치 등)을 언제든 허용하거나 철회할 수 있고, 앱 삭제로 저장된 데이터를 지울 수 있습니다. 개인정보 열람·삭제 등 요청은 아래 문의처로 보내 주세요.</p>
+<h2>6. 아동의 개인정보</h2><p>앱은 만 14세 미만 아동을 대상으로 하지 않으며, 아동의 개인정보를 알면서 수집하지 않습니다.</p>
+<h2>7. 안전성 확보</h2><p>개발자는 개인정보를 서버에 저장하지 않으며, 앱 통신은 가능한 범위에서 암호화(HTTPS)된 연결을 사용합니다.</p>
+<h2>8. 문의 및 개인정보 보호책임자</h2><p>책임자: {REP} · 상호: {BIZ}<br>이메일: <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+<h2>9. 방침의 변경</h2><p>방침이 바뀌면 이 페이지에 공지하며, 시행일을 갱신합니다.</p>""", depth)
+
 cards = ""
 for a in APPS:
     ic = f'<img src="assets/{a["icon"]}" alt="">' if a["icon"] else '<div class="ph"></div>'
@@ -82,16 +101,9 @@ for a in APPS:
     page(f'apps/{a["slug"]}/index.html', f'{a["name"]} - {BIZ}', f"""{ic}<h1>{a["name"]}</h1><p class="lead">{a["tag"]}</p>
 <p>{a["desc"]}</p><h2>주요 기능</h2><ul>{feats}</ul>{shots}
 <h2>정책</h2><p><a href="../../privacy/{a["slug"]}/">개인정보처리방침</a> · <a href="../../contact/">문의하기</a></p>""", 2)
-    items = "".join(f"<li>{p}</li>" for p in a["privacy"])
-    page(f'privacy/{a["slug"]}/index.html', f'{a["name"]} 개인정보처리방침 - {BIZ}', f"""<h1>{a["name"]} 개인정보처리방침</h1>
-<p class="lead">시행일 {UPDATED}</p>
-<p>{BIZ}(이하 "개발자")는 {a["name"]} 앱(이하 "앱") 이용자의 개인정보를 소중히 다루며, 아래와 같이 처리합니다.</p>
-<h2>1. 수집·이용하는 정보</h2><ul>{items}</ul><p>{a["extra"]}</p>
-<h2>2. 제3자 제공 및 보관</h2><p>개발자는 이용자의 개인정보를 별도로 수집·보관하거나 제3자에게 제공하지 않습니다. 위에 적은 외부 서비스가 처리하는 정보는 해당 서비스의 정책을 따릅니다.</p>
-<h2>3. 이용자의 권리</h2><p>앱을 삭제하면 기기에 저장된 데이터가 삭제됩니다. 권한은 기기 설정에서 언제든 변경할 수 있습니다.</p>
-<h2>4. 아동의 개인정보</h2><p>개발자는 만 14세 미만 아동의 개인정보를 알면서 수집하지 않습니다.</p>
-<h2>5. 문의</h2><p>개인정보 관련 문의: 개인정보 보호책임자 {REP}, <a href="mailto:{EMAIL}">{EMAIL}</a></p>
-<h2>6. 변경</h2><p>방침이 바뀌면 이 페이지에 공지합니다.</p>""", 2)
+    write_privacy(a, f'privacy/{a["slug"]}/index.html', 2)
+    if a["slug"] == "luck-enchant":
+        write_privacy(a, "privacy.html", 0)  # 기존 주소(/privacy.html) 유지
 
 page("contact/index.html", f"문의 - {BIZ}", f"""<h1>문의</h1><p class="lead">앱 이용 중 문의, 오류 제보, 제휴 문의를 받습니다.</p>
 <table><tr><td>이메일</td><td><a href="mailto:{EMAIL}">{EMAIL}</a></td></tr>
